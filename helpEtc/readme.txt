@@ -1,4 +1,3 @@
-
                                 _                
                                | |               
              _ __ ___  __ _  __| |_ __ ___   ___ 
@@ -18,7 +17,9 @@
 
     Installation
    ==============
-    
+    *** Just run botis.php ***
+      -> try help for some commands, try out the convert for a example.
+
     First you need PHP.
         If you read swedish or can use google translate you can read my guide @ http://4morefun.net/tips/php-i-cmd/ (worked 2012-01-11 18:12 GMT+1)
         Else it is just to download and unzip + some PATH / .bat stuff to allow you to write php everywhere.
