@@ -12,128 +12,128 @@
 class table
 {
     
-	/**
-	 * Create a text table.
-	 *
-	 * @param (string) $tbldata = Ie {row1Col1, row1Col2} {row2}
-	 * @param (string) optional $opt1    = margin:x
-	 * @param (string) optional $opt2    = /padding:x
-	 */
+    /**
+     * Create a text table.
+     *
+     * @param (string) $tbldata = Ie {row1Col1, row1Col2} {row2}
+     * @param (string) optional $opt1    = margin:x
+     * @param (string) optional $opt2    = /padding:x
+     */
 #   function table($tbldata, $argv?)
     function table($tbldata, $opt1 = null, $opt2 = null)
-	{
-	    //Init vars
-    	$tableRow = 0;
-    	$nl       = chr(10); //New line
-    	$tblsep;             //Separatorn (+------+-----+)
-    	$tblSize;            //Längsta ordet i tabellen (10, rakabasjai)
-    	$tblWidth;           //Antal ord i en rad som förekommer mäst (3, hund, rakabasjai, fågel)
-    	$margin;             //Antal space
+    {
+        //Init vars
+        $tableRow = 0;
+        $nl       = chr(10); //New line
+        $tblsep;             //Separatorn (+------+-----+)
+        $tblSize;            //Längsta ordet i tabellen (10, rakabasjai)
+        $tblWidth;           //Antal ord i en rad som förekommer mäst (3, hund, rakabasjai, fågel)
+        $margin;             //Antal space
     
-    	//Argumenten
-    	//--------------------------------------------
-    	if(!isset($tbldata)) {
-    	    echo "Usages: \"{rubrik, rubrik 2} {kolum 1, kolum 2} {kolum} ...\" [ /margin:int][ /padding:int]";
-    	    goto end; //Sorry! :(
-    	}
-    	
-    	unset($argv[0]);
-    	$argv = explode(" /", implode(" ", $argv));
-    
-    	//Margin och padding
-    	if(isset($argv[1]))
-    	{
-    	    $argv[1] = trim($argv[1]);
-    	    preg_match("/(margin:(?P<m>[\d]+))|(padding:(?P<p>[\d]+))/", $argv[1], $m);
-    	    if(!empty($m["p"])) { define("PADDING", $m["p"]); }
-    		if(!empty($m["m"])) { define("MARGIN",  $m["m"]); }
-    	}
-    
-    	if(isset($argv[2]))
-    	{
-    	    $argv[2] = trim($argv[2]);
-    	    preg_match("/(margin:(?P<m>[\d]+))|(padding:(?P<p>[\d]+))/", $argv[2], $m);
-    		if(!empty($m["p"])) { define("PADDING", $m["p"]); }
-    		if(!empty($m["m"])) { define("MARGIN",  $m["m"]); }
-    	}
-    
-    	define("PADDING", 2);
-    	define("MARGIN", 5);
-    
-    
-    	//--------------------------------------------	
-    	//Tar ut datan vi vill ha
+        //Argumenten
+        //--------------------------------------------
+        if(!isset($tbldata)) {
+            echo "Usages: \"{rubrik, rubrik 2} {kolum 1, kolum 2} {kolum} ...\" [ /margin:int][ /padding:int]";
+            goto end; //Sorry! :(
+        }
         
-    	preg_match_all("/(?P<th>[^,}{]+)|(}(?P<space> ){)/", $argv[0], $matches, PREG_SET_ORDER);
+        unset($argv[0]);
+        $argv = explode(" /", implode(" ", $argv));
+    
+        //Margin och padding
+        if(isset($argv[1]))
+        {
+            $argv[1] = trim($argv[1]);
+            preg_match("/(margin:(?P<m>[\d]+))|(padding:(?P<p>[\d]+))/", $argv[1], $m);
+            if(!empty($m["p"])) { define("PADDING", $m["p"]); }
+            if(!empty($m["m"])) { define("MARGIN",  $m["m"]); }
+        }
+    
+        if(isset($argv[2]))
+        {
+            $argv[2] = trim($argv[2]);
+            preg_match("/(margin:(?P<m>[\d]+))|(padding:(?P<p>[\d]+))/", $argv[2], $m);
+            if(!empty($m["p"])) { define("PADDING", $m["p"]); }
+            if(!empty($m["m"])) { define("MARGIN",  $m["m"]); }
+        }
+    
+        define("PADDING", 2);
+        define("MARGIN", 5);
+    
+    
+        //--------------------------------------------    
+        //Tar ut datan vi vill ha
+        
+        preg_match_all("/(?P<th>[^,}{]+)|(}(?P<space> ){)/", $argv[0], $matches, PREG_SET_ORDER);
       
-    	//Gör om $matches till en smartare array
-    	for($i=0; $matches[$i] !== null; $i++)
-    	{
-    	    krsort($matches[$i]);
-    		
-    		if(current($matches[$i]) == " ") {
-    		    $tableRow++;
-    		}
-    		else {
-    		    $table[$tableRow][] = current($matches[$i]);
-    		}
-    	}
-    	
-    	//Tar ut längden på det längsta ordet ($tblSize) och
-    	//tar reda på hur många ord som mäst förekommer på en rad ($tblWidth)
-    	if(!function_exists("my_strlen")) {
-		    /**
-			 * Strl av $iaaa
-			 */
-    	    function my_strlen($i, $k) {
-    	        global $tblSize, $tblWidth;
-    
-    	        $tblSize[]  = strlen($i);
-    		    $tblWidth[] = $k;
-    	    }
-    	}
+        //Gör om $matches till en smartare array
+        for($i=0; $matches[$i] !== null; $i++)
+        {
+            krsort($matches[$i]);
+            
+            if(current($matches[$i]) == " ") {
+                $tableRow++;
+            }
+            else {
+                $table[$tableRow][] = current($matches[$i]);
+            }
+        }
         
-    	
-    	global $tblSize, $tblWidth;
-    	array_walk_recursive($table, 'my_strlen');
+        //Tar ut längden på det längsta ordet ($tblSize) och
+        //tar reda på hur många ord som mäst förekommer på en rad ($tblWidth)
+        if(!function_exists("my_strlen")) {
+            /**
+             * Strl av $iaaa
+             */
+            function my_strlen($i, $k) {
+                global $tblSize, $tblWidth;
     
-    	
-    	rsort($tblSize);
-    	rsort($tblWidth);
+                $tblSize[]  = strlen($i);
+                $tblWidth[] = $k;
+            }
+        }
+        
+        
+        global $tblSize, $tblWidth;
+        array_walk_recursive($table, 'my_strlen');
     
-    	//Margin
-    	for($i=0; $i <= MARGIN; $i++) {
-    	    $margin .= " ";
-    	}
+        
+        rsort($tblSize);
+        rsort($tblWidth);
     
-    	//Skapar +-----+-----+ delen
-    	$tblsep = $margin;
-    	for($i=0; $i <= $tblWidth[0]; $i++) {
-    	    $tblsep .= str_pad("+", $tblSize[0] + PADDING + 1, "-");
-    	}
-    	$tblsep .= "+" . $nl;
+        //Margin
+        for($i=0; $i <= MARGIN; $i++) {
+            $margin .= " ";
+        }
+    
+        //Skapar +-----+-----+ delen
+        $tblsep = $margin;
+        for($i=0; $i <= $tblWidth[0]; $i++) {
+            $tblsep .= str_pad("+", $tblSize[0] + PADDING + 1, "-");
+        }
+        $tblsep .= "+" . $nl;
     
     
-    	//Skapar tabelen
-    	for($i=0; $table[$i] !== null; $i++)
-    	{
-    	    for($j=0; $j <= $tblWidth[0]; $j++) {
-    		    $buf .= str_pad($table[$i][$j], $tblSize[0] + PADDING, " ", STR_PAD_BOTH) ."|";
-    		}
-    		
-    		$buf   = $margin . '|' . $buf . $nl . $tblsep;
-    		$buf2 .= $buf;
-    		$buf   = "";
-    	}
+        //Skapar tabelen
+        for($i=0; $table[$i] !== null; $i++)
+        {
+            for($j=0; $j <= $tblWidth[0]; $j++) {
+                $buf .= str_pad($table[$i][$j], $tblSize[0] + PADDING, " ", STR_PAD_BOTH) ."|";
+            }
+            
+            $buf   = $margin . '|' . $buf . $nl . $tblsep;
+            $buf2 .= $buf;
+            $buf   = "";
+        }
     
-    	$buf2 = $tblsep . $buf2 . $nl;
+        $buf2 = $tblsep . $buf2 . $nl;
     
-    	echo $nl;
-    	echo $buf2;
+        echo $nl;
+        echo $buf2;
     
-    	//Sorry! :(
-    	end:
-	}
+        //Sorry! :(
+        end:
+    }
 }
 
 //(we love you botis <3)

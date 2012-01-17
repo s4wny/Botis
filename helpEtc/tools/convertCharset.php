@@ -19,7 +19,7 @@ main($argv[1]);
 function convertFile($file)
 {
     global $charsetFrom, $charsetTo;
-	
+    
     $fh   = fopen($file, 'rb');
     $data = stream_get_contents($fh);
     fclose($fh);
@@ -35,30 +35,30 @@ function main($dir)
 {
     global $charsetFrom, $charsetTo, $convertExt;
 
-	if(is_dir($dir))
-	{
-	    foreach(glob($dir . '/*') as $file) {
-		    
-			$ext  = pathinfo($file, PATHINFO_EXTENSION);
-			$file = $file;
-			
-			
-		    if(is_dir($file)) {
-			    echo "Read dir '$file'.\n";
-			    main($file);
-			}
-			elseif(in_array($ext, $convertExt))
-			{
-			    echo "Converting '$file' from $charsetFrom to $charsetTo.\n";
-			    convertFile($file);  
-			}
-		}
-	}
-	else
-	{
-	    die("'". $dir ."' is not an dir!");
-	}
-	
+    if(is_dir($dir))
+    {
+        foreach(glob($dir . '/*') as $file) {
+            
+            $ext  = pathinfo($file, PATHINFO_EXTENSION);
+            $file = $file;
+            
+            
+            if(is_dir($file)) {
+                echo "Read dir '$file'.\n";
+                main($file);
+            }
+            elseif(in_array($ext, $convertExt))
+            {
+                echo "Converting '$file' from $charsetFrom to $charsetTo.\n";
+                convertFile($file);  
+            }
+        }
+    }
+    else
+    {
+        die("'". $dir ."' is not an dir!");
+    }
+    
 }
 
 ?>

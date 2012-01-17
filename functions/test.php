@@ -10,22 +10,22 @@
 class test
 {
     /**
-	 * The main function own
-	 */
+     * The main function own
+     */
     function __construct($name, $test, $things, $day = 'mondays')
-	{
-	    echo $this->getName($name) . " like to test ". $test ." with ". $things . "espacilly on ". $day;
-	}
-	
-	/**
-	 * Capilize first char in $name
-	 *
-	 * @return $n with first char cailized
-	 */
-	private function getName($n)
-	{
-	    return ucfirst($n);
-	}
+    {
+        echo $this->getName($name) . " like to test ". $test ." with ". $things . "espacilly on ". $day;
+    }
+    
+    /**
+     * Capilize first char in $name
+     *
+     * @return $n with first char cailized
+     */
+    private function getName($n)
+    {
+        return ucfirst($n);
+    }
 }
 
 //(we love you botis <3)
