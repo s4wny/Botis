@@ -4,6 +4,7 @@
  * Convert dec to hex, binary, octal and character.
  *
  * @author Sony? aka Sawny
+ * @package convert
  * @example convert dec "60 51" to chr
  */
 class dec
@@ -13,8 +14,10 @@ class dec
      *
      * @TODO copy to clipbord (exec + botis $this | clip)
      *       raw output
+     * @param (int)    $val/([0-9]+)/ = xxx.
+     * @param (string) $to            = xxx.
      */
-    function __construct($val, $null, $to)
+    function __construct($val, $nullWord, $to)
     {
        
        //TODO: If isset
@@ -24,7 +27,7 @@ class dec
        
        print_r(explode(" ", $val));
        
-       echo $this->$to(explode(" ", $val));
+       echo $this->$to($val);
     }
     
     
@@ -33,7 +36,7 @@ class dec
      */
     public function hex($dec)
     {
-        for($i = 0, $decLen = count($dec); $i < $decLen; $i++)
+        for($i = 0, $decLen = strlen($dec); $i < $decLen; $i++)
         {
             $delimiter = (($i + 1) % 4  === 0 AND $i !== 0) ? "    ":" ";        //Tab or space
             $delimiter = (($i + 1) % 16 === 0 AND $i !== 0) ? "\n"  :$delimiter; //New line after 4 colums (16/4=4)
@@ -86,18 +89,6 @@ class dec
         }
         
         return trim($result);
-    }
-    
-    
-    //Expriment
-    //--------------------------
-    
-    /**
-     * Allows u to write $dec->to->dec.
-     */
-    public function to()
-    {
-        return new hex();
     }
 }
 

@@ -40,7 +40,7 @@
     
 .
 
-    Make an function
+    Create an function
    ==================
     ...
     
@@ -65,14 +65,14 @@
                 Like in all futre movies (sciens fiction movies). Really cool, talk with a computer, wow.
             
         
-        o Use Ascci as charset.
+        o Use ANSI as charset.
           - Why? -
               Well, I wanted UTF-8 as charset (ofc). But it doesn't work well with Windows/Cmd/PHP.
               STDIN can't read UTF-8 or something like that. The best charset I then can use that work
               is OEM 437, Extended ASCII. BUT, it has no header so you need to specific that you are
               working with OEM 437 everytime you open a file in notepad++. Trust me, you will forget
               to do that and people will not make plugins and this script will not be popular.
-              So now I use ASCII, it at least allow me to use ÅÄÖ (Sweden!!1).
+              So now I use ANSI, it at least allow me to use ÅÄÖ (Sweden!!1).
         
         o The filename MUST be the same as the class, that is the name of the command.
         
@@ -128,7 +128,7 @@
             Name  = AutoRun
             Value = `chcp 1252`
         
-        For multicommands you can add an `&` between every command, ie `chcp 437 & cls & echo Welcome!`
+        For multicommands you can add an `&` between every command, ie `chcp 1252 & cls & echo Welcome!`
    
     o Config file
         o Error_lvl?

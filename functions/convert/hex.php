@@ -4,6 +4,7 @@
  * Convert hex to decimal, binary, octal and character.
  *
  * @author Sony? aka Sawny
+ * @package convert
  * @example convert hex 0x3C33 to chr
  */
 class hex

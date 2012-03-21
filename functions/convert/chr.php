@@ -4,6 +4,7 @@
  * Convert chr to hex, binary, octal and dec.
  *
  * @author Sony? aka Sawny
+ * @package convert
  * @example Convert chr "<3" to dec
  * @TODO: Rename to text
  */

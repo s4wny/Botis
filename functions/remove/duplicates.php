@@ -3,12 +3,14 @@
 /**
  * Remove identical lines from a file.
  *
+ * Can remove milions duplicates under one second (intel core i3).
  * If you need to work with binary files edit the
  * script and specifc the b flag for fopen.
  *
- * @author Sony? aka Sawny
- * @example remove duplicates from C:\...\example.txt
- * @example remove duplicates from C:\...\hugeFile.txt fast!
+ * @author     Sony? aka Sawny
+ * @package    remove
+ * @example    remove duplicates from C:\...\example.txt
+ * @example    remove duplicates from C:\...\hugeFile.txt
  */
 class duplicates
 {
@@ -17,10 +19,8 @@ class duplicates
      *
      * @param $from     (null)     Does nothing. Just so you can wirte 'remove duplicates _from_ x'
      * @param $file     (string)   The file to remove duplicates from. Will be overridden.
-     * @param $fastMode (anything) Anything except false will use fast mode.
-                                   *Note:* Fastmode will _sort_ your data (ASC) in order to work with a fast algorithm.
      */
-    function __construct($from, $file, $fastMode = false)
+    function __construct($from, $file, $slow = false)
     {
         clearstatcache();
         
@@ -33,7 +33,7 @@ class duplicates
             
             
             $data    = explode(nl, $data);
-            $newData = ($fastMode === false) ? $this->slowAlgorithm($data) : $this->fastAlgorithm($data);
+            $newData = $this->fastAlgorithm($data);
             
             
             //Save the new data
@@ -49,81 +49,25 @@ class duplicates
     
     
     /**
-     * *about the algoithm*
+     * Remove duplicates.
      *
-     * @param $data (array) array('row1', 'row2', 'row3', ...)
-     * @return $data with no duplicated lines.
-     */
-    private function slowAlgorithm($data)
-    {
-        $newData    = array(); //The new data with no duplicates!
-        $duplicates = array(); //The removed duplicates
-        $rows       = count($data);
-        
-        debug(ERROR_LVL_DEBUG, "Slow algorithm.");
-        
-        //Remove duplicates
-        foreach($data as $pos => $row)
-        {
-            echo "Status, line: ". $pos ." / $rows (". round($pos / $rows * 100) ."%) \r";
-            
-            if(!in_array($row, $newData)) {
-                $newData[] = $row;
-            }
-            else {
-                $duplicates[] = $row;
-            }
-        }
-        
-        
-        //Print the result
-        echo str_repeat(" ", strlen($mess)) . "\n";
-        echo $this->finishStatus($rows, count($newData));
-        
-        
-        return implode(nl, $newData);
-    }
-    
-    
-    /**
-     * Sort the data and then just check the prev item. Much faster. 
+     * Big thanks to http://www.puremango.co.uk/2010/06/fast-php-array_unique-for-removing-duplicates/ and the comments.
      *
-     * The algorithm:
-     * 1) First sort the data. (This way all duplicates will be in order and the search will just check the prev item)
-     * 2) Loop through all items
-     *     2.1) Check if prev was the same
-     *     2.2) If true, skip the item.
-     *
+     * @author John @link http://www.puremango.co.uk/2010/06/fast-php-array_unique-for-removing-duplicates/#comment-14638
      * @param $data (array) array('row1', 'row2', 'row3', ...)
      * @return $data with no duplicated lines.
      */
     private function fastAlgorithm($data)
     {
-        $newData = array();      //The new data with no duplicates!
-        $rows    = count($data); //Num of rows in old data
-        $i       = 0;
-        
-        debug(ERROR_LVL_DEBUG, "Fast algorithm.");
-        
-        sort($data);
-        
-        //Remove duplicates
-        foreach($data as $pos => $row)
-        {
-            echo "Status, line: ". $pos ." / $rows (". round($pos / $rows * 100) ."%) \r";
-            
-            if($row !== $newData[$i]) { //Check ONE item.
-                $newData[++$i] = $row;
-            }
-        }
-        
+        $rows      = count($data); //Num of rows in old data
+        $startTime = microtime(true);
+
+        $data = array_keys(array_flip($data));
         
         //Print the result
-        echo str_repeat(" ", strlen($mess)) . "\n"; //Override the last \r
-        echo $this->finishStatus($rows, count($newData));
+        echo $this->finishStatus($rows, count($data), $startTime);
 
-        
-        return implode(nl, $newData);
+        return implode(nl, $data);
     }
     
     
@@ -134,11 +78,15 @@ class duplicates
      * @param $newRows     (int) ...
      * @TODO: Tiden det tog
      */
-    private function finishStatus($orginalRows, $newRows)
+    private function finishStatus($orginalRows, $newRows, $startTime)
     {
-        return "Removed   ". ($orginalRows - $newRows) ." duplicates.\n".
-               "Old file: ". $orginalRows ." lines\n".
-               "New file: ". $newRows ." lines\n";
+        $duration = microtime(true) - $startTime;
+        
+        return "Time:     ". $duration                 ." micro seconds.\n".
+               "       = ~". round($duration)          ." seconds.\n".
+               "Removed   ". ($orginalRows - $newRows) ." duplicates.\n".
+               "Old file: ". $orginalRows              ." lines\n".
+               "New file: ". $newRows                  ." lines\n";
     }
     
     

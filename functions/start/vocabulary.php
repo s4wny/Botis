@@ -3,9 +3,12 @@
 /**
  * A simple vocabulary program to help with homework.
  *
- * @author Sony? aka Sawny
- * @example Start vocabulary test
- * @TODO: One DB for everylanguage.
+ * @author       Sony? aka Sawny
+ * @package      start
+ * @example      Start vocabulary test
+ * @TODO:        One DB for everylanguage. Then u can choose wich languge.
+ * @todo         Test on the X words you have answered most incorrectly on.
+ * @todo         Test on the X words you have answered most incorrectly on in a specific category.
  */
 class vocabulary
 {
@@ -18,7 +21,7 @@ class vocabulary
      */
     function __construct($nullWords = null)
     {
-        $this->file = BASEDIR . DATA_FOLDER . "/vocabulary/vocabularies.txt";
+        $this->file = BASEDIR . DATA_FOLDER . "vocabulary/vocabularies.txt";
         
         echo nl. "    --- Vocabulary test ---".nl;
         
@@ -51,7 +54,7 @@ class vocabulary
     private function help()
     {
         echo "Kommandon\n\n".
-             "    - add (eng, sv, kategori)\n".
+             "    - add (*langYouDontKnow*, *langYouKnow*, kategori)\n".
              "    - start ([kategori])\n".
              "    - cats\n\n";
     }
@@ -155,7 +158,7 @@ class vocabulary
         
         //Skriv till filen med det nya resultatet
         rewind($fh); //Till början av filen
-        fwrite($fh, $newData) OR debug(ERROR_LVL_ERROR, "Can't write to '". $this->file ."'.");
+        fwrite($fh, trim($newData)) OR debug(ERROR_LVL_ERROR, "Can't write to '". $this->file ."'.");
         fclose($fh);
         
         //Skriv ut resultatet
@@ -166,7 +169,7 @@ class vocabulary
             echo "> Vill du se vilka ord du fick fel på?\n< ";
             $answer = trim(fgets(STDIN));
             
-            if($answer == 'j' OR $answer == 'ja') {
+            if($answer == 'j' OR $answer == 'ja' OR $answer == 'y' OR $answer == 'yes') {
                 foreach($wrong as $key => $val) {
                     echo "> '$key' ska vara '$val' \n";
                 }
@@ -196,7 +199,7 @@ class vocabulary
             $data[] = explode(" | ", $val);
         }
         
-        //Återställer nycklarna (0, 1, 2, ...)
+        //Reset the keys (0, 1, 2, ...)
         sort($data);
         
         for($i=0; $i < count($data); $i++) {

@@ -8,13 +8,13 @@
 @@Main config
 input             = $_
 output            = botis>
-function_folder   = /functions
-data_folder       = /data
+function_folder   = functions/
+data_folder       = data/
 error_lvl         = 3
 has_colors        = true
 
 @@Alias
-exit         = cya, bai, bye
+exit         = cya, bai, bye, kthxbai
 help         = ??
 clearscreen  = cls
 

@@ -3,6 +3,7 @@
 /**
  * Create a plain-text table.
  *
+ * @package make
  * @example make a table {{row1col1, row1col2}, {r2c1, r2c2} {r3c1}, {r4c1, r4c2, r4c3, r4c4}}
  *          make a table {{row1col1, row1col2}, {r2c1, r2c2} {r3c1}, {r4c1, r4c2, r4c3, r4c4}} --margin=10 --padding=5
  *          make a table {{row1col1, row1col2}, {r2c1, r2c2} {r3c1}, {r4c1, r4c2, r4c3, r4c4}} -m=10 -p=5
@@ -34,7 +35,7 @@ class table
         //--------------------------------------------
         if(!isset($tbldata)) {
             echo "Usages: \"{rubrik, rubrik 2} {kolum 1, kolum 2} {kolum} ...\" [ /margin:int][ /padding:int]";
-            goto end; //Sorry! :(
+            break 1;
         }
         
         unset($argv[0]);
@@ -130,9 +131,6 @@ class table
     
         echo $nl;
         echo $buf2;
-    
-        //Sorry! :(
-        end:
     }
 }
 

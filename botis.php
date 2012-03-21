@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A amazing GLaDOS, that we all love.
+ * An amazing GLaDOS, that we all love.
  * 
  * CLI GLaDOS (Command-line Interface Genetic Lifeform and Disk Operating System)
  * Botis say hi!
@@ -26,8 +26,8 @@ class botis
     function __construct($argv)
     {
         //Config
-        define("BASEDIR",           dirname(__FILE__));
-        define("CONFIGFILE",        BASEDIR ."/config.txt");
+        define("BASEDIR",           dirname(__FILE__) . '/');
+        define("CONFIGFILE",        BASEDIR ."config.txt");
         define("ERROR_LVL_ERROR",   1);
         define("ERROR_LVL_WARNING", 2);
         define("ERROR_LVL_DEBUG",   3);
@@ -79,8 +79,20 @@ class botis
                 elseif($argv[0] == "clearscreen") {
                     $this->clearScreen();
                 }
-                ELSE {
-                    $this->run($argv, $this->help, BASEDIR . FUNCTION_FOLDER);
+                ELSE
+                {
+                    $argv = $this->removeSmallWords($argv, $this->help);
+                    
+                    if($argv !== false) {
+                        $functionPath = $this->findFunctionPath($argv[0], $this->help);
+                        $functionPath = ($functionPath !== true) ? $functionPath :'';
+                    
+                        $this->run(BASEDIR . FUNCTION_FOLDER . $functionPath, $argv);
+                    }
+                    else
+                    {
+                        debug(ERROR_LVL_ERROR, "The command dosen't exist! Try `help` for commands.");
+                    }
                 }
             }
         }
@@ -98,35 +110,80 @@ class botis
      * @param (array) $path     Path so I know where the command are, else I can't load it.
      * @return void
      */
-    private function run($argv, &$helpRef, $path = '')
+    private function run($path, $argv)
     {
-        $argv[0] = array_shift($this->aliasFix(array($argv[0]), $this->alias));
+        $command = array_shift($argv);
+
+        require_once($path .'/'. $command .'.php');
+        
+        $reflect   = new ReflectionClass($command);
+        //TODO: better solution, may require @param? Then count *, @param * could be if u use func-get_params..
+        @$instance = $reflect->newInstanceArgs($argv) OR debug(ERROR_LVL_ERROR, "Something happend while trying to call '". $command ."::__construct((array) \$args)'. Maybe to few args. On line ". __LINE__ ." in botis.php.");
+    }
+    
+    
+    /**
+     * Remove 'small words' from an array and return it.
+     *
+     * What this function actully does is to remove every word (value in the array) that
+     * isn't a folder or a file in the `FUNCTION_FOLDER`. This way you can write "what you want FOLDER(VERB) blargh hahah lol FOLDER(VERB) jskfs jahsd jas FILE(FUNCTION)".
+     *
+     * @param (array) $argv     Args..
+     * @param (ref)   $helpRef  The "master" array. If the first value in $argv dosen't exist in here, it will be removed. Íf it exists go deeper. Then repeat the proccess until a) no args exsits. b) $helpRef reach the deepest layer OR a file.
+     * @return Remaing args OR false if all args where deleted.
+     */
+    private function removeSmallWords($argv, &$helpRef)
+    {
+         $argv[0] = array_shift($this->aliasFix(array($argv[0]), $this->alias));
         
         //Remove words that don't exist in $help, Allow you to use "small words" E.g. boits plz make an table {{data1, data2}, {row2col1, row2col2}, ...,}
         while(!isset($helpRef[$argv[0]]) AND !empty($argv)) {
             array_shift($argv);
         }
-
         
         if(is_array($helpRef[$argv[0]]) AND !empty($argv)) //Verb (folder)
         {
             $folder = array_shift($argv);
             
-            $this->run($argv, $helpRef[$folder], $path .'/'. $folder);
+            return $this->removeSmallWords($argv, $helpRef[$folder]); //$helpRef[$folder] = go one level deeper.
         }
         elseif(empty($argv)) //Dont exist
         {
-            echo "Kommandot finns inte! Se `Help` för att se alla kommandon.".nl;
+            return false;
         }
-        else //Command / program
+        else    //File, return the args.
         {
-            $command = array_shift($argv);
-
-            require_once($path .'/'. $command .'.php');
+            return $argv;
+        }
+    }
+    
+    
+    
+    /**
+     * TODO: Doc me.
+     *
+     */
+    private function findFunctionPath($function, &$helpRef)
+    {
+        $path = '';
+        
+        foreach($helpRef as $key => $val)
+        {
+            if(is_array($val)) //Verb (Folder)
+            {
+                $resp = $this->findFunctionPath($function, $helpRef[$key]);
             
-            $reflect   = new ReflectionClass($command);
-            //TODO: better solution, may require @param? Then count *, @param * could be if u use func-get_params..
-            @$instance = $reflect->newInstanceArgs($argv) OR debug(ERROR_LVL_ERROR, "Something happend while trying to call '". $command ."::__construct((array) \$args)'. Maybe to few args. On line ". __LINE__ ." in botis.php.");
+                if($resp === true) {
+                    return $key;
+                }
+                elseif($resp == true) {
+                    return $key .'/'. $resp;
+                }
+            }
+            elseif($key == $function) //File (the function we search for)
+            {
+                return true;
+            }
         }
     }
     
@@ -559,7 +616,7 @@ class botis
             
             foreach($phpDoc as $val) {
                 list($tag, $val)  = explode(" ", $val, 2);
-                $phpDocTags[$tag] = $val;
+                $phpDocTags[$tag] = $val; //TODO: Overwriting! Maybe use val as key and tag as val. ` $phpDocTags[$val] = $tag;`
             }
             
             
@@ -651,9 +708,9 @@ function debug($lvl, $mess, $var = null)
                     var_dump($var);
                 break;
                 
-                case "string":
+                /*case "string":
                     echo $var;
-                break;
+                break;*/
                 
                 case "resource":
                     echo get_resource_type($var);
